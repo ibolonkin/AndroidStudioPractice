@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AndroidStudioPractice"
+rootProject.name = "practice3"
 include(":app")
  
