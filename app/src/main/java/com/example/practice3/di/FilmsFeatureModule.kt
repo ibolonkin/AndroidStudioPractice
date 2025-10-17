@@ -4,11 +4,9 @@ import com.example.practice3.Films
 import com.example.practice3.navigation.Route
 import com.example.practice3.navigation.TopLevelBackStack
 import com.example.practice3.news.presentation.viewModel.FilmsDetailsViewModel
-import org.koin.dsl.module
-import androidx.appcompat.widget.AppCompatDrawableManager.get
 import org.koin.core.module.dsl.viewModel
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.module
 
-val mainModule = module {
-    single { TopLevelBackStack<Route>(Films) }
+val filmsFeatureModule = module {
+    viewModel { FilmsDetailsViewModel(get(), get()) }
 }
