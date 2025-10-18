@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FilmsUiModel (
-    val id: Int,
+    val id: String?,
     val title: String,
     val descr: String?,
     val year: String,
