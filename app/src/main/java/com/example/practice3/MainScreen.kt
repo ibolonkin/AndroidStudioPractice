@@ -28,6 +28,7 @@ import com.example.practice3.navigation.TopLevelBackStack
 import com.example.practice3.news.presentation.model.FilmsUiModel
 import com.example.practice3.news.presentation.screen.FilmsDetailsDialog
 import com.example.practice3.news.presentation.screen.FilmsListScreen
+import com.example.practice3.news.presentation.screen.FilmsSettingsDialog
 import org.koin.java.KoinJavaComponent.inject
 //import com.google.android.libraries.mapsplatform.transportation.consumer.model.Route
 
@@ -44,6 +45,8 @@ data object Films: TopLevelRoute {
 data object News: TopLevelRoute {
     override val icon = Icons.AutoMirrored.Filled.List
 }
+
+data object FilmsSettings: Route
 
 data class FilmsDetails(val films: FilmsUiModel) : com.example.practice3.navigation.Route
 
@@ -86,7 +89,11 @@ fun MainScreen() {
                 ){
                     FilmsDetailsDialog(it.films)
                 }
-
+                entry<FilmsSettings>(
+                    metadata = DialogSceneStrategy.dialog(DialogProperties())
+                ) {
+                    FilmsSettingsDialog()
+                }
             }
         )
     }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.practice3.FilmsDetails
+import com.example.practice3.FilmsSettings
 import com.example.practice3.core.launchLoadingAndError
 import com.example.practice3.navigation.Route
 import com.example.practice3.navigation.TopLevelBackStack
@@ -38,9 +39,9 @@ class FilmsListViewModel(
         topLevelBackStack.add(FilmsDetails(films))
     }
 
-    fun onRetryClick() {
-        loadFilms()
-    }
+    fun onRetryClick() = loadFilms()
+
+    fun onSettingsClick() = topLevelBackStack.add(FilmsSettings)
 
     private fun loadFilms() {
         viewModelScope.launchLoadingAndError(

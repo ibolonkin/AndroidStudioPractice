@@ -2,12 +2,19 @@ package com.example.practice3.news.presentation.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,6 +45,7 @@ fun FilmsListScreen() {
         state.state,
         viewModel::onFilmsClick,
         viewModel::onRetryClick,
+        viewModel::onSettingsClick,
     )
 }
 
@@ -46,24 +54,36 @@ private fun FilmsListScreenContent(
     state: FilmsListViewState.State,
     onFilmsClick: (FilmsUiModel) -> Unit = {},
     onRetryClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
 ) {
-    when(state) {
-        FilmsListViewState.State.Loading -> {
-            FullscreenLoading()
-        }
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick =  { onSettingsClick() }) {
+                Icon(Icons.Default.Settings, "SettingsBtn")
+            }
+        },
+        contentWindowInsets = WindowInsets(0.dp)
+    ) {
+        Box(Modifier.padding(it)){
+            when (state) {
+                FilmsListViewState.State.Loading -> {
+                    FullscreenLoading()
+                }
 
-        is FilmsListViewState.State.Error -> {
-            FullscreenError(
-                retry = {onRetryClick()},
-                text = state.error
-            )
-        }
+                is FilmsListViewState.State.Error -> {
+                    FullscreenError(
+                        retry = { onRetryClick() },
+                        text = state.error
+                    )
+                }
 
-        is FilmsListViewState.State.Success -> {
-            LazyColumn {
-                state.data.forEach { films ->
-                    item {
-                        FilmsListItem(films) { onFilmsClick(it) }
+                is FilmsListViewState.State.Success -> {
+                    LazyColumn {
+                        state.data.forEach { films ->
+                            item {
+                                FilmsListItem(films) { onFilmsClick(it) }
+                            }
+                        }
                     }
                 }
             }
