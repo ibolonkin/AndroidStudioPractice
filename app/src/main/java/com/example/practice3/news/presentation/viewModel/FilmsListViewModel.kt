@@ -15,6 +15,9 @@ import com.example.practice3.news.presentation.model.FilmsListViewState
 import com.example.practice3.news.presentation.model.FilmsUiModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.String
@@ -48,8 +51,13 @@ class FilmsListViewModel(
             handleError = { e -> updateState(FilmsListViewState.State.Error(e.localizedMessage.orEmpty())) }
         ) {
             updateState(FilmsListViewState.State.Loading)
-            val films = interactor.getFilms()
-            updateState(FilmsListViewState.State.Success(mapToUi(films)))
+
+            interactor.observeFilmFirstSettings()
+                .onEach { updateState(FilmsListViewState.State.Loading) }
+                .map { interactor.getFilms(it) }
+                .collect{ films ->
+                    updateState(FilmsListViewState.State.Success(mapToUi(films)))
+                }
         }
     }
 

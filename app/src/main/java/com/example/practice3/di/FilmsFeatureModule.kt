@@ -17,12 +17,12 @@ import retrofit2.Retrofit
 val filmsFeatureModule = module {
     viewModel { FilmsDetailsViewModel(get(), get()) }
     viewModel { FilmsListViewModel(get(), get()) }
-    viewModel { FilmsSettingsViewModel(get()) }
+    viewModel { FilmsSettingsViewModel(get(), get()) }
 
     single { get<Retrofit>().create(FilmsApi::class.java) }
 
     factory { FilmsResponseToEntityMapper() }
-    single { FilmsRepository(get(), get()) }
+    single { FilmsRepository(get(), get(), get()) }
 
     single { FilmsInteractor(get()) }
 }
