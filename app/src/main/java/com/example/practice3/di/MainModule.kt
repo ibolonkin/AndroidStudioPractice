@@ -11,16 +11,20 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.example.practice3.news.data.cache.BadgeCache
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 
 val mainModule = module {
+
     single { TopLevelBackStack<Route>(Films) }
 
     single {
         getDataStore(androidContext())
     }
+    single { BadgeCache() }
+
 }
 
 fun getDataStore(androidContext: Context): DataStore<Preferences> =
