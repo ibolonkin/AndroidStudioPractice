@@ -11,6 +11,4 @@ import org.koin.core.module.dsl.viewModelOf
 
 val mainModule = module {
     single { TopLevelBackStack<Route>(Films) }
-    //viewModelOf(::FilmsDetailsViewModel)
-    viewModel { FilmsDetailsViewModel(get(), get()) }
 }

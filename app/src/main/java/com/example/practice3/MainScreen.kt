@@ -79,7 +79,7 @@ fun MainScreen() {
                     ContentGray("test")
                 }
                 entry<Films> {
-                    FilmsListScreen(topLevelBackStack)
+                    FilmsListScreen()
                 }
                 entry<FilmsDetails>(
                     metadata = DialogSceneStrategy.dialog(DialogProperties())

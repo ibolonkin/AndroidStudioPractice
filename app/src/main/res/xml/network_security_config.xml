@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Разрешаем cleartext-трафик (HTTP) для указанных доменов -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Для эмулятора Android Studio часто используется 10.0.2.2 -->
+        <domain includeSubdomains="true">26.15.99.17</domain>
+        <!-- Или если у вас другой IP, укажите его -->
+        <!-- <domain includeSubdomains="true">192.168.1.50</domain> -->
+        <!-- Можно указать несколько domain-тегов для разных IP/хостов -->
+    </domain-config>
+</network-security-config>
