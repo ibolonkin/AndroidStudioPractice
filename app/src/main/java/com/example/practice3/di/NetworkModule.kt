@@ -1,6 +1,7 @@
 package com.example.practice3.di
 
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.example.practice3.news.data.model.FilmsApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -31,4 +32,5 @@ val networkModule = module {
             .client(get())
             .build()
     }
+    single<FilmsApi> { get<Retrofit>().create(FilmsApi::class.java) }
 }
