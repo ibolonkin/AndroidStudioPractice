@@ -26,9 +26,11 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.practice3.navigation.Route
 import com.example.practice3.navigation.TopLevelBackStack
 import com.example.practice3.news.presentation.model.FilmsUiModel
+import com.example.practice3.news.presentation.screen.EditProfileScreen
 import com.example.practice3.news.presentation.screen.FilmsDetailsDialog
 import com.example.practice3.news.presentation.screen.FilmsListScreen
 import com.example.practice3.news.presentation.screen.FilmsSettingsDialog
+import com.example.practice3.news.presentation.screen.ProfileScreen
 import org.koin.java.KoinJavaComponent.inject
 //import com.google.android.libraries.mapsplatform.transportation.consumer.model.Route
 
@@ -50,6 +52,12 @@ data object FilmsSettings: Route
 
 data class FilmsDetails(val films: FilmsUiModel) : com.example.practice3.navigation.Route
 
+data object Profile : TopLevelRoute {
+    override val icon = Icons.Default.Face
+}
+
+data object EditProfile : Route
+
 @Composable
 fun MainScreen() {
     val topLevelBackStack by inject<TopLevelBackStack<Route>>(clazz = TopLevelBackStack::class.java)
@@ -57,7 +65,7 @@ fun MainScreen() {
 
     Scaffold(bottomBar = {
         NavigationBar {
-            listOf(Films, News).forEach { route ->
+            listOf(Films, News, Profile).forEach { route ->
                 NavigationBarItem(
                     icon = { Icon(route.icon, null) },
                     selected = topLevelBackStack.topLevelKey == route,
@@ -93,6 +101,13 @@ fun MainScreen() {
                     metadata = DialogSceneStrategy.dialog(DialogProperties())
                 ) {
                     FilmsSettingsDialog()
+                }
+                entry<Profile> {
+                    ProfileScreen()
+                }
+
+                entry<EditProfile> {
+                    EditProfileScreen()
                 }
             }
         )
