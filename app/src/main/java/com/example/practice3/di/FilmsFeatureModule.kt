@@ -15,9 +15,11 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 
 val filmsFeatureModule = module {
+    includes(profileModule)
     viewModel { FilmsDetailsViewModel(get(), get(), get()) }
     viewModel { FilmsListViewModel(get(), get(), get()) }
     viewModel { FilmsSettingsViewModel(get(), get(), get()) }
+    viewModel { FilmsDetailsViewModel(get(), get(), get()) }
 
     single { get<Retrofit>().create(FilmsApi::class.java) }
 

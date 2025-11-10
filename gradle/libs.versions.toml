@@ -13,6 +13,9 @@ glide = "5.0.5"
 koinAndroid = "4.1.0"
 ksp = "2.2.0-2.0.2"
 retrofit = "3.0.0"
+modo = "0.7.0"
+coil = "2.4.0"
+datastoreCore = "1.1.7"
 
 materialIconsCore = "1.7.3"
 nav3Core = "1.0.0-alpha10"
@@ -23,6 +26,8 @@ room = "2.8.2"
 datastorePreferences = "1.1.7"
 
 [libraries]
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+modo = { group = "com.github.terrakok", name = "modo", version.ref = "modo" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -43,6 +48,8 @@ glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 koin-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroid" }
+
+androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
