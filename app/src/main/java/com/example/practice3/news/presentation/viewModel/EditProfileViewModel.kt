@@ -2,6 +2,7 @@ package com.example.practice3.news.presentation.viewModel
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -14,6 +15,7 @@ import com.example.practice3.news.domain.model.Profile
 import com.example.practice3.news.presentation.model.EditProfileViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -46,7 +48,8 @@ class EditProfileViewModel(
                 name = profile.name,
                 photoUri = profile.photoUri,
                 resumeUrl = profile.resumeUrl,
-                position = profile.position
+                position = profile.position,
+                favoritePairTime = profile.favoritePairTime
             )
         }
     }
@@ -58,7 +61,8 @@ class EditProfileViewModel(
                     name = profile.name,
                     photoUri = profile.photoUri,
                     resumeUrl = profile.resumeUrl,
-                    position = profile.position
+                    position = profile.position,
+                    favoritePairTime = profile.favoritePairTime
                 )
             }
         }
@@ -71,6 +75,38 @@ class EditProfileViewModel(
     fun onResumeUrlChange(url: String) {
         _state.value = _state.value.copy(resumeUrl = url)
     }
+
+    fun onFavoritePairTimeChange(time: String) {
+        _state.value = _state.value.copy(favoritePairTime = time)
+        validateTime(time)
+    }
+
+    private fun validateTime(time: String) {
+        val timeError = if (time.isNotEmpty() && !isValidTimeFormat(time)) {
+            "Некорректный формат времени"
+        } else null
+        _state.value = _state.value.copy(timeError = timeError)
+    }
+
+    private fun isValidTimeFormat(time: String): Boolean {
+        return try {
+            val parts = time.split(":")
+            if (parts.size != 2) return false
+            val hour = parts[0].toInt()
+            val minute = parts[1].toInt()
+            hour in 0..23 && minute in 0..59
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    fun isSaveEnabled(): Boolean {
+        val currentState = _state.value
+        return currentState.name.isNotBlank() &&
+                currentState.timeError == null &&
+                (currentState.favoritePairTime.isEmpty() || isValidTimeFormat(currentState.favoritePairTime))
+    }
+
 
     fun showPhotoSourceDialog() {
         _state.value = _state.value.copy(showPhotoSourceDialog = true)
@@ -90,12 +126,9 @@ class EditProfileViewModel(
         _state.value = _state.value.copy(photoUri = photoUri)
     }
 
-    fun onSaveClick() {
-
-        // ИСПРАВЛЕНО: используем GlobalScope вместо viewModelScope
+    fun onSaveClick(context: Context) {
         GlobalScope.launch {
             try {
-
                 val currentState = _state.value
 
                 interactor.saveProfile(
@@ -103,9 +136,19 @@ class EditProfileViewModel(
                         name = currentState.name,
                         photoUri = currentState.photoUri,
                         resumeUrl = currentState.resumeUrl,
-                        position = currentState.position
+                        position = currentState.position,
+                        favoritePairTime = currentState.favoritePairTime
                     )
                 )
+
+                if (currentState.favoritePairTime.isNotEmpty() && isValidTimeFormat(currentState.favoritePairTime)) {
+                    withContext(Dispatchers.Main) {
+                        NotificationScheduler(context).scheduleNotification(
+                            currentState.name,
+                            currentState.favoritePairTime
+                        )
+                    }
+                }
 
                 withContext(Dispatchers.Main) {
                     topLevelBackStack.removeLast()

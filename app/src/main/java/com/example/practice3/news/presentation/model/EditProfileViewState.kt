@@ -5,6 +5,8 @@ data class EditProfileViewState(
     val photoUri: String = "",
     val resumeUrl: String = "",
     val position: String = "Старший разработчик",
+    val favoritePairTime: String = "",
     val showPhotoSourceDialog: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val timeError: String? = null
 )

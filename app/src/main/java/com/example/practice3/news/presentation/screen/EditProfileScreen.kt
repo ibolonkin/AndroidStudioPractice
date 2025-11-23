@@ -7,6 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,6 +27,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,11 +43,9 @@ import org.koin.androidx.compose.koinViewModel
 import androidx.core.content.ContextCompat
 import android.Manifest
 import android.content.pm.PackageManager
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.DateRange
 import androidx.core.content.FileProvider
+import com.example.practice3.utils.showTimePicker
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -81,7 +86,6 @@ fun EditProfileScreen() {
     EditProfileContent(
         state = state,
         onPhotoClick = {
-            // Проверяем разрешение перед показом диалога
             if (hasCameraPermission(context)) {
                 viewModel.showPhotoSourceDialog()
             } else {
@@ -90,8 +94,15 @@ fun EditProfileScreen() {
         },
         onNameChange = viewModel::onNameChange,
         onResumeUrlChange = viewModel::onResumeUrlChange,
+        onFavoritePairTimeChange = viewModel::onFavoritePairTimeChange,
+        onTimePickerClick = {
+            showTimePicker(context, state.favoritePairTime) { hour, minute ->
+                val timeString = String.format("%02d:%02d", hour, minute)
+                viewModel.onFavoritePairTimeChange(timeString)
+            }
+        },
         onSaveClick = {
-            viewModel.onSaveClick()
+            viewModel.onSaveClick(context)
         },
         onBackClick = viewModel::onBackClick,
         onGallerySelected = {
@@ -99,16 +110,15 @@ fun EditProfileScreen() {
         },
         onCameraSelected = {
             val uri = createImageUri(context)
-            if (uri != null) {
-                cameraUri = uri
-                takePictureLauncher.launch(uri)
+            uri?.let {
+                cameraUri = it
+                takePictureLauncher.launch(it)
             }
         },
         onHidePhotoDialog = viewModel::hidePhotoSourceDialog
     )
 }
 
-// Функция проверки разрешения камеры
 private fun hasCameraPermission(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(
         context,
@@ -116,7 +126,6 @@ private fun hasCameraPermission(context: Context): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 
-// Функция создания URI для фото
 private fun createImageUri(context: Context): Uri? {
     return try {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -143,13 +152,14 @@ fun EditProfileContent(
     onPhotoClick: () -> Unit,
     onNameChange: (String) -> Unit,
     onResumeUrlChange: (String) -> Unit,
+    onFavoritePairTimeChange: (String) -> Unit,
+    onTimePickerClick: () -> Unit,
     onSaveClick: () -> Unit,
     onBackClick: () -> Unit,
     onGallerySelected: () -> Unit,
     onCameraSelected: () -> Unit,
     onHidePhotoDialog: () -> Unit
 ) {
-    // Показываем диалог выбора источника фото
     if (state.showPhotoSourceDialog) {
         PhotoSourceDialog(
             onDismiss = onHidePhotoDialog,
@@ -172,7 +182,6 @@ fun EditProfileContent(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Аватар
             AsyncImage(
                 model = state.photoUri.ifEmpty { null },
                 contentDescription = "Аватар",
@@ -191,7 +200,6 @@ fun EditProfileContent(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
-            // Поле имени
             OutlinedTextField(
                 value = state.name,
                 onValueChange = onNameChange,
@@ -199,7 +207,6 @@ fun EditProfileContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Поле ссылки на резюме
             OutlinedTextField(
                 value = state.resumeUrl,
                 onValueChange = onResumeUrlChange,
@@ -207,17 +214,43 @@ fun EditProfileContent(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                OutlinedTextField(
+                    value = state.favoritePairTime,
+                    onValueChange = onFavoritePairTimeChange,
+                    label = { Text("Время любимой пары") },
+                    placeholder = { Text("HH:mm") },
+                    isError = state.timeError != null,
+                    modifier = Modifier.weight(1f)
+                )
 
-            // Кнопка сохранения
+                IconButton(onClick = onTimePickerClick) {
+                    Icon(Icons.Default.DateRange, contentDescription = "Выбрать время")
+                }
+            }
+
+            state.timeError?.let { error ->
+                Text(
+                    text = error,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.error,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+
+
             Button(
                 onClick = onSaveClick,
+                enabled = state.name.isNotBlank() &&
+                        (state.favoritePairTime.isEmpty() || state.timeError == null),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text("Сохранить")
             }
 
-            // Кнопка назад
             Button(
                 onClick = onBackClick,
                 modifier = Modifier.align(Alignment.CenterHorizontally)

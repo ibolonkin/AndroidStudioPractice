@@ -16,6 +16,7 @@ class ProfileRepository(
         val PHOTO_URI = stringPreferencesKey("profile_photo_uri")
         val RESUME_URL = stringPreferencesKey("profile_resume_url")
         val POSITION = stringPreferencesKey("profile_position")
+        val FAVORITE_PAIR_TIME = stringPreferencesKey("profile_favorite_pair_time")
     }
 
     suspend fun saveProfile(profile: Profile) {
@@ -24,6 +25,7 @@ class ProfileRepository(
             preferences[Keys.PHOTO_URI] = profile.photoUri
             preferences[Keys.RESUME_URL] = profile.resumeUrl
             preferences[Keys.POSITION] = profile.position
+            preferences[Keys.FAVORITE_PAIR_TIME] = profile.favoritePairTime
         }
     }
 
@@ -32,7 +34,8 @@ class ProfileRepository(
             name = preferences[Keys.NAME] ?: "",
             photoUri = preferences[Keys.PHOTO_URI] ?: "",
             resumeUrl = preferences[Keys.RESUME_URL] ?: "",
-            position = preferences[Keys.POSITION] ?: "Старший разработчик"
+            position = preferences[Keys.POSITION] ?: "Старший разработчик",
+            favoritePairTime = preferences[Keys.FAVORITE_PAIR_TIME] ?: ""
         )
     }
 }
