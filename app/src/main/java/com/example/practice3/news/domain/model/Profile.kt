@@ -5,4 +5,5 @@ data class Profile(
     val photoUri: String = "",
     val resumeUrl: String = "",
     val position: String = "Старший разработчик",
+    val favoritePairTime: String = "",
 )
