@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.ksp)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -63,6 +64,7 @@ dependencies {
     // Navigation
     implementation(libs.bundles.navigation3)
     implementation(libs.kotlinx.serialization.core)
+    implementation(libs.modo)
 
     // image loading
     implementation(libs.glide)
@@ -84,6 +86,9 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     implementation(libs.room.ktx)
     implementation(libs.androidx.datastore.preferences)
+
+    implementation(libs.androidx.datastore.core)
+    implementation(libs.coil.compose)
 
 
 }
